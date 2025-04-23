@@ -6,7 +6,7 @@ namespace Tensors
 {
     namespace LAPACK
     {
-        std::string Info()
+        inline std::string Info()
         {
             std::string s;
             
