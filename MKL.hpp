@@ -15,38 +15,40 @@
 
 #endif
 
+#ifdef TPE_MKL_USE_ILP64
 
-    
-#ifdef _MKL_H_
-
-    #ifdef TENSORS_ILP64
-
-        #ifndef MKL_ILP64
-    
-            static_assert(false,"mkl.h loaded, TENSORS_ILP64 defined, but MKL_ILP64 undefined. This will result in clashes for the integer types in BLAS.");
-        #endif
-
-    #else
-
-        #ifdef MKL_ILP64
-
-            #define TENSORS_ILP64
-
-        #endif
-
-    #endif
-                      
-#else
-
-    #ifdef TENSORS_ILP64
+    #ifndef MKL_ILP64
 
         #define MKL_ILP64
 
+        #pragma message("Tensors/MKL.hpp: Forcing MKL_ILP64 based on CMake definition.")
+
     #endif
 
-    #include <mkl.h>
+    #ifndef TENSORS_ILP64
 
+        #define TENSORS_ILP64
+
+    #endif
+#else
+
+    // If CMake doesn't define TPE_MKL_USE_ILP64, assume LP64
+    #ifdef MKL_ILP64
+
+        #undef MKL_ILP64
+        
+        #pragma message("Tensors/MKL.hpp: Undefining MKL_ILP64 for LP64.")
+
+    #endif
+
+     #ifdef TENSORS_ILP64
+
+        #undef TENSORS_ILP64
+
+     #endif
 #endif
+    
+#include <mkl.h>
 
 namespace Tensors
 {
